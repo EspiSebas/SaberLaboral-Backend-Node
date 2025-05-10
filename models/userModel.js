@@ -1,13 +1,21 @@
-const db = require('./db');
+const db = require('../configuration/db');
 
 // Función para crear la tabla si no existe
-db.run(`CREATE TABLE IF NOT EXISTS users (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL,
-  last TEXT NOT NULL,
-  email TEXT NOT NULL UNIQUE,
-  password TEXT NOT NULL
-)`);
+db.run(`
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    last TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    password TEXT NOT NULL
+  )
+`, (err) => {
+  if (err) {
+    console.error('Error al crear la tabla:', err.message);
+  } else {
+    console.log('Tabla "users" creada o ya existe.');
+  }
+});
 
 // Crear un nuevo usuario en la base de datos
 const crearUsuario = (name, last, email, password, callback) => {
@@ -53,9 +61,22 @@ const eliminarUsuarioPorId = (id, callback) => {
   });
 };
 
+
+
+const obtenerTodosUsuarios = (callback) => {
+  const sql = `SELECT * FROM users `;
+  db.run(sql, (err,resultados) =>{
+    if (err) {
+      return callback(err); // Pasar el error al callback
+    }
+    callback(null,resultados); // Todo salió bien
+  });
+};
+
 module.exports = {
   crearUsuario,
   obtenerUsuarioPorEmail,
-  obtenerUsuarioPorId,  // Agregado opcional
-  eliminarUsuarioPorId
+  obtenerUsuarioPorId, 
+  eliminarUsuarioPorId,
+  obtenerTodosUsuarios
 };

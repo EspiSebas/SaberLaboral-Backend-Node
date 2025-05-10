@@ -1,16 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const userController = require('../controllers/userController');
+const userController = require('../controller/userController');
 
-// Equivalente a router.register(r'register', views.register)
-router.get('/register', userController.getAllUsers); // GET all users 
-router.post('/register', userController.createUser); // POST (crear usuario básico)
 
-// Equivalente a path('registrar_usuario/', ...)
+// POST (crear usuario básico)
 router.post('/registrar_usuario', userController.registrarUsuario);
-
 router.post('/login_usuario', userController.loginUsuario);
-
-router.delete('/deleteUser/:id', userController.deleteUser);
+router.delete('/deleteUser/:id', userController.eliminarUsuario);
+router.get('/usuarios',userController.obtenerTodosUsuarios)
 
 module.exports = router;

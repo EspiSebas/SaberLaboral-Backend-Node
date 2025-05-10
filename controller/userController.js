@@ -1,10 +1,9 @@
-const { userModel } = require('../models');
-const validator = require('validator');
+const userModel  = require('../models/userModel');
+const validator = require('../utils/validator');
 
-// 🔐 Serializador: oculta la contraseña antes de responder
+
 function serializeUser(user) {
   return {
-    id: user.id,
     name: user.name,
     last: user.last,
     email: user.email
@@ -18,7 +17,7 @@ const registrarUsuario = (req, res) => {
     return res.status(400).json({ message: 'Todos los campos son obligatorios', respuesta: 400 });
   }
 
-  if (!validator.isEmail(email)) {
+  if (!validator.validateEmail(email)) {
     return res.status(400).json({ message: 'El correo no es válido', respuesta: 400 });
   }
 
@@ -47,13 +46,14 @@ const registrarUsuario = (req, res) => {
 };
 
 const loginUsuario = (req, res) => {
+
   const { email, password } = req.body;
 
   if (!email || !password) {
     return res.status(400).json({ message: 'Todos los campos son obligatorios', respuesta: 400 });
   }
 
-  if (!validator.isEmail(email)) {
+  if (!validator.validateEmail(email)) {
     return res.status(400).json({ message: 'El correo no es válido', respuesta: 400 });
   }
 
@@ -86,8 +86,20 @@ const eliminarUsuario = (req, res) => {
   });
 };
 
+
+const obtenerTodosUsuarios = (req,res) => {
+  userModel.obtenerTodosUsuarios((err,usuarios) => {
+    if (err) {
+      return res.status(404).json({ message: 'Usuario no existe !!', respuesta: 404 });
+    }
+
+    res.status(200).json({ message: 'Usuarios', respuesta: 200 , data:usuarios});
+  });
+}
+
 module.exports = {
   registrarUsuario,
   loginUsuario,
   eliminarUsuario,
+  obtenerTodosUsuarios
 };
